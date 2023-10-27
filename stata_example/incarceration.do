@@ -42,7 +42,7 @@ twoway (line gap48 year,lp(solid)lw(vthin)lcolor(black)), yline(0, lpattern(shor
     xline(1993, lpattern(shortdash) lcolor(black)) xtitle("",si(medsmall)) xlabel(#10) 
     ytitle("Gap in black male prisoner prediction error", size(medsmall)) legend(off);
 #delimit cr
-save synth_bmprate_48.dta, replace
+save created_data/synth_bmprate_48.dta, replace
 
 * Inference: placebo test 
 use https://github.com/scunning1975/mixtape/raw/master/texas.dta, clear
@@ -84,7 +84,7 @@ matlist state`i', names(rows);
     }
 use created_data/synth_gap_bmprate48.dta, clear
 sort year
-save placebo_bmprate48.dta, replace
+save created_data/placebo_bmprate48.dta, replace
 
 foreach i of local statelist {
         merge year using created_data/synth_gap_bmprate`i' 
