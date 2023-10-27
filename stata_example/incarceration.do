@@ -7,7 +7,7 @@ use https://github.com/scunning1975/mixtape/raw/master/texas.dta, clear
 ssc install synth 
 ssc install mat2txt
 * Change the following path to where you want to save your results
-cd "D:\Users\JuanEstrada\OneDrive - Emory University\EmoryUniversity\Courses\ECON485\stata_example"
+cd "D:\Users\JuanEstrada\OneDrive - Emory University\EmoryUniversity\Courses\ECON485\synthetic_control\stata_example"
 
 * Execute the synthetic control function
 #delimit; 
