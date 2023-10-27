@@ -46,6 +46,9 @@ save created_data/synth_bmprate_48.dta, replace
 
 * Inference: placebo test 
 use https://github.com/scunning1975/mixtape/raw/master/texas.dta, clear
+
+* Calculate the Synthetic Control estimator for each contrl unit 
+* Save the results in a Stata database
 #delimit ; 
 local statelist  1 2 4 5 6 8 9 10 11 12 13 15 16 17 18 20 21 22 23 24 25 26 27 28 29 30 31 32  
     33 34 35 36 37 38 39 40 41 42 45 46 47 48 49 51 53 55; 
@@ -63,13 +66,14 @@ synth   bmprison
             matrix state`i' = e(RMSPE);
 };
 
+* Print the vectors with the Root Mean Squared Predicted Error;
 foreach i of local statelist {; 
 matrix rownames state`i'=`i'; 
 matlist state`i', names(rows); 
 };
 #delimit cr
 
-* Create all possible gaps
+* Create all possible gaps and save them into stata format
 	
  foreach i of local statelist {
     use created_data/synth_bmprate_`i' ,clear
@@ -82,6 +86,8 @@ matlist state`i', names(rows);
     sort year 
     save created_data/synth_gap_bmprate`i', replace
     }
+
+* Read the gap data for Texas and merge the other states-- Save the results
 use created_data/synth_gap_bmprate48.dta, clear
 sort year
 save created_data/placebo_bmprate48.dta, replace
@@ -94,26 +100,7 @@ foreach i of local statelist {
 }
 
 ** Inference: Estimate the pre- and post-RMSPE and calculate the ratio of the
-*  post-pre RMSPE   
 
-foreach i of local statelist {
-    use created_data/synth_gap_bmprate`i', clear
-    gen gap3=gap`i'*gap`i'
-    egen postmean=mean(gap3) if year>1993
-    egen premean=mean(gap3) if year<=1993
-    gen rmspe=sqrt(premean) if year<=1993
-    replace rmspe=sqrt(postmean) if year>1993
-    gen ratio=rmspe/rmspe[_n-1] if 1994
-    gen rmspe_post=sqrt(postmean) if year>1993
-    gen rmspe_pre=rmspe[_n-1] if 1994
-    mkmat rmspe_pre rmspe_post ratio if 1994, matrix (state`i')
-}
-
-* show post/pre-expansion RMSPE ratio for all states, generate histogram
-    foreach i of local statelist {
-        matrix rownames state`i'=`i'
-        matlist state`i', names(rows)
-                                    }
 use created_data/placebo_bmprate.dta, replace
 * Picture of the full sample, including outlier RSMPE
 #delimit;   
